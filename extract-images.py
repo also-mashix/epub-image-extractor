@@ -11,8 +11,24 @@ class command_line(cmd.Cmd):
         # Set the command prompt to indicate the tool is active
         self.prompt = 'epub-extractor> '
 
+    def preloop(self):
+        print("Please paste the full path to an epub file.")
+        print("Type: exit to quit.")
+
+    def default(self, line):
+        # Remove surrounding quotes if present
+        line = line.strip().strip('"').strip("'")
+        # Try to extract if the input looks like a file path
+        if os.path.isfile(line) and line.lower().endswith('.epub'):
+            self.do_extract(line)
+        else:
+            print(f'*** Unknown syntax: {line}')
+
     # Accept arg with path to epub to extract and extract images
     def do_extract(self, arg):
+        # Remove surrounding quotes if present
+        arg = arg.strip().strip('"').strip("'")
+        
         print(f'Extracted images will be saved to: <epub-file-name>_images directory')
         
         # input validation
@@ -59,4 +75,3 @@ if __name__ == '__main__':
         cli.do_extract(sys.argv[1])
     else:
         command_line().cmdloop()
-        print(f'Please paste the full path to an epub file.')
